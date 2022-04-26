@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Add `--filter-lang` parameter to allow specifying other filter language to be used within the `--filter` parameter
 
 ### Added
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - `Client.search` accepts an optional `filter_lang` argument for `filter` requests [#128](https://github.com/stac-utils/pystac-client/pull/128)
+- Added support for filtering the search endpoint using the `media_type` in `Client.open` [#142](https://github.com/stac-utils/pystac-client/pull/142)
 
 ### Fixed
 - Values from `parameters` and `headers` arguments to `Client.open` and `Client.from_file` are now also used in requests made from `CollectionClient` instances

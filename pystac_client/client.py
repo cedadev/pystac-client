@@ -49,7 +49,7 @@ class Client(pystac.Catalog):
             catalog : A :class:`Client` instance for this Catalog/API
         """
         cat = cls.from_file(url, headers=headers, parameters=parameters)
-        search_link = cat.get_links('search')
+        search_link = cat.get_links('search', media_type=pystac.MediaType.GEOJSON)
         # if there is a search link, but no conformsTo advertised, ignore conformance entirely
         # NOTE: this behavior to be deprecated as implementations become conformant
         if ignore_conformance or ('conformsTo' not in cat.extra_fields.keys()
@@ -169,8 +169,7 @@ class Client(pystac.Catalog):
                 <https://github.com/radiantearth/stac-api-spec/tree/master/item-search>`__ or does not have a link with
                 a ``"rel"`` type of ``"search"``.
         """
-
-        search_link = self.get_single_link('search')
+        search_link = self.get_single_link('search', media_type=pystac.MediaType.GEOJSON)
         if search_link is None:
             raise NotImplementedError(
                 'No link with "rel" type of "search" could be found in this catalog')

@@ -18,6 +18,7 @@ class ConformanceClasses(Enum):
     QUERY = fr"{stac_prefix}(.*){re.escape('/item-search#query')}"
     FILTER = fr"{stac_prefix}(.*){re.escape('/item-search#filter')}"
     COLLECTIONS = re.escape("http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30")
+    ASSET_SEARCH = fr"{stac_prefix}(.*){re.escape('/asset-search')}"
 
 
 CONFORMANCE_URIS = {c.name: c.value for c in ConformanceClasses}

@@ -8,6 +8,7 @@ from pystac_client.conformance import ConformanceClasses
 from pystac_client.exceptions import APIError
 from pystac_client.item_search import ItemSearch
 from pystac_client.stac_api_io import StacApiIO
+from pystac_client.asset_search import AssetSearch
 
 if TYPE_CHECKING:
     from pystac.item import Item as Item_Type
@@ -175,3 +176,11 @@ class Client(pystac.Catalog):
                 'No link with "rel" type of "search" could be found in this catalog')
 
         return ItemSearch(search_link.target, stac_io=self._stac_io, client=self, **kwargs)
+
+    def asset_search(self, **kwargs: Any) -> AssetSearch:
+        if self._stac_io.conforms_to(ConformanceClasses.ASSET_SEARCH):
+            search_link = self.get_self_href() + '/asset/search'
+        else:
+            NotImplementedError("This Catalog does not have Asset Search")
+
+        return AssetSearch(url=search_link,stac_io=self._stac_io, client=self, **kwargs)

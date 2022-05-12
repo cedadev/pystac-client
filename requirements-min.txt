@@ -1,4 +1,4 @@
 requests==2.25
-pystac==1.2.0
+git+https://github.com/Mahir-Sparkess/pystac@asset-search
 jsonschema==3.2.0
 python-dateutil==2.7.0

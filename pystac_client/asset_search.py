@@ -28,7 +28,7 @@ from pystac_client.item_search import (
     FieldsLike,
     Sortby,
     SortbyLike,
-    StacIO,
+    StacApiIO,
     dict_merge
 )
 from pystac_client.conformance import ConformanceClasses

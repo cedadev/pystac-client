@@ -3,6 +3,7 @@ from copy import deepcopy
 from datetime import timezone, datetime as datetime_
 from typing import Union, Optional, Iterable, List, Tuple, Iterator, Dict, Any
 
+from functools import lru_cache
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzutc
 from pystac import Item, Link, Collection
@@ -29,7 +30,8 @@ from pystac_client.item_search import (
     Sortby,
     SortbyLike,
     StacApiIO,
-    dict_merge
+    dict_merge,
+    FreeTextLike
 )
 from pystac_client.conformance import ConformanceClasses
 from pystac.stac_io import StacIO
@@ -90,7 +92,6 @@ class AssetSearch:
                  datetime: Optional[DatetimeLike] = None,
                  intersects: Optional[IntersectsLike] = None,
                  ids: Optional[IDsLike] = None,
-                 items: Optional[ItemsLike] = None,
                  query: Optional[QueryLike] = None,
                  filter: Optional[FilterLike] = None,
                  filter_lang: Optional[FilterLangLike] = None,
@@ -99,7 +100,8 @@ class AssetSearch:
                  max_assets: Optional[int] = None,
                  method: Optional[str] = 'POST',
                  stac_io: Optional[StacIO] = None,
-                 client: Optional["Client"] = None):
+                 client: Optional["Client"] = None,
+                 q: Optional[FreeTextLike] = None,):
         self.url = url
         self.client = client
 
@@ -123,13 +125,13 @@ class AssetSearch:
             'bbox': self._format_bbox(bbox),
             'datetime': self._format_datetime(datetime),
             'ids': self._format_ids(ids),
-            'items': self._format_items(items),
             'intersects': self._format_intersects(intersects),
             'query': self._format_query(query),
             'filter': self._format_filter(filter),
             'filter-lang': self._format_filter_lang(filter, filter_lang),
             'sortby': self._format_sortby(sortby),
-            'fields': self._format_fields(fields)
+            'fields': self._format_fields(fields),
+            "q": self._format_freetext(q),
         }
 
         self._parameters = {k: v for k, v in params.items() if v is not None}
@@ -341,8 +343,37 @@ class AssetSearch:
             return json.loads(value)
         return deepcopy(getattr(value, '__geo_interface__', value))
 
+    def _format_freetext(self, q: Optional[FreeTextLike]) -> Optional[str]:
+        if q is not None:
+            self._stac_io.assert_conforms_to(ConformanceClasses.FREETEXT)
+            return q
+        else:
+            return None
+
     def get_assets(self) -> Iterator[Dict]:
         for page in self._stac_io.get_pages(self.url, self.method, self.get_parameters()):
             for asset in page['features']:
                 yield Asset(**asset)
+
+    @lru_cache(1)
+    def matched(self) -> Optional[int]:
+        """Return number matched for search
+
+        Returns the value from the `numberMatched` or `context.matched` field.
+        Not all APIs will support counts in which case a warning will be issued
+
+        Returns:
+            int: Total count of matched items. If counts are not supported `None`
+            is returned.
+        """
+        params = {**self.get_parameters(), "limit": 1}
+        resp = self._stac_io.read_json(self.url, method=self.method, parameters=params)
+        found = None
+        if "context" in resp:
+            found = resp["context"]["matched"]
+        elif "numberMatched" in resp:
+            found = resp["numberMatched"]
+        if found is None:
+            warnings.warn("numberMatched or context.matched not in response")
+        return found
 

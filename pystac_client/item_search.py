@@ -236,6 +236,7 @@ class ItemSearch:
         sortby: Optional[SortbyLike] = None,
         fields: Optional[FieldsLike] = None,
         q: Optional[FreeTextLike] = None,
+        source: Optional[List[str]] = None,
     ):
         self.url = url
         self.client = client
@@ -269,6 +270,7 @@ class ItemSearch:
             "sortby": self._format_sortby(sortby),
             "fields": self._format_fields(fields),
             "q": self._format_freetext(q),
+            "source": source
         }
 
         self._parameters: Dict[str, Any] = {
@@ -603,18 +605,6 @@ class ItemSearch:
             warnings.warn("numberMatched or context.matched not in response")
         return found
 
-    def get_item_collections(self) -> Iterator[ItemCollection]:
-        """DEPRECATED. Use :meth:`ItemSearch.item_collections` instead.
-
-        Yields:
-            ItemCollection : a group of Items matching the search criteria within an
-            ItemCollection
-        """
-        warnings.warn(
-            "get_item_collections() is deprecated, use item_collections() instead",
-            DeprecationWarning,
-        )
-        return self.item_collections()
 
     def item_collections(self) -> Iterator[ItemCollection]:
         """Iterator that yields ItemCollection objects.  Each ItemCollection is
@@ -632,17 +622,6 @@ class ItemSearch:
                     page, preserve_dict=False, root=self.client
                 )
 
-    def get_items(self) -> Iterator[Item]:
-        """DEPRECATED. Use :meth:`ItemSearch.items` instead.
-
-        Yields:
-            Item : each Item matching the search criteria
-        """
-        warnings.warn(
-            "get_items() is deprecated, use items() instead",
-            DeprecationWarning,
-        )
-        return self.items()
 
     def items(self) -> Iterator[Item]:
         """Iterator that yields :class:`pystac.Item` instances for each item matching

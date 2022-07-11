@@ -236,7 +236,6 @@ class ItemSearch:
         sortby: Optional[SortbyLike] = None,
         fields: Optional[FieldsLike] = None,
         q: Optional[FreeTextLike] = None,
-        source: Optional[List[str]] = None,
     ):
         self.url = url
         self.client = client
@@ -270,7 +269,6 @@ class ItemSearch:
             "sortby": self._format_sortby(sortby),
             "fields": self._format_fields(fields),
             "q": self._format_freetext(q),
-            "source": source
         }
 
         self._parameters: Dict[str, Any] = {

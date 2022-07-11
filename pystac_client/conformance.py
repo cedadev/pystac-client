@@ -16,8 +16,8 @@ class ConformanceClasses(Enum):
     FEATURES = rf"{stac_prefix}(.*){re.escape('/ogcapi-features')}"
     ITEM_SEARCH = rf"{stac_prefix}(.*){re.escape('/item-search')}"
 
-    CONTEXT = rf"{stac_prefix}(.*){re.escape('/item-search#context')}"
-    FIELDS = rf"{stac_prefix}(.*){re.escape('/item-search#fields')}"
+    CONTEXT = rf"{stac_prefix}(.*){re.escape('/item-search/#context')}"
+    FIELDS = rf"{stac_prefix}(.*){re.escape('/item-search/#fields')}"
     SORT = rf"{stac_prefix}(.*){re.escape('/item-search#sort')}"
     QUERY = rf"{stac_prefix}(.*){re.escape('/item-search#query')}"
     FILTER = rf"{stac_prefix}(.*){re.escape('/item-search#filter')}"

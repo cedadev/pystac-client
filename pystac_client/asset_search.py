@@ -71,7 +71,7 @@ class Asset(PystacAsset):
             extra_fields: Optional[Dict[str, Any]] = None,
             **kwargs
     ):
-        super().__init__(href, title, description, media_type, roles, extra_fields)
+        super().__init__(href, asset_id, description, media_type, roles, extra_fields=properties)
         self.type = type
         self.properties = properties
         self.item = item
@@ -81,6 +81,16 @@ class Asset(PystacAsset):
         self.size = size
         self.links = links
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Generate a dictionary representing the JSON of this Asset.
+        Returns:
+            dict: A serialization of the Asset that can be written out as JSON.
+        """
+        
+        d: Dict[str, Any] = {"href": self.href}
+        d = super().to_dict()
+        d["properties"] = self.properties
+        return d
 
 class AssetSearch:
 
